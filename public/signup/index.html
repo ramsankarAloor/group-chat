@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign up - Group chat</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Roboto&display=swap"
+    />
+    <script src="../js/config.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="signup-container">
+        <div class="heading">
+          <h2>Sign up</h2>
+        </div>
+        <div class="signup-fields">
+          <div class="field">
+            <input type="text" id="name" placeholder=" Name" required /><br />
+          </div>
+          <div class="field">
+            <input type="email" id="email" placeholder=" Email" required /><br />
+          </div>
+          <span id="emailError" class="error-message"></span>
+          
+          <div class="field">
+            <input type="password" id="password" placeholder=" Password" required /><br />
+          </div>
+          <div class="signup-btn-div">
+            <button>Sign up</button>
+          </div>
+        </div>
+        <div class="link-container">
+            <p>Have an account? </p>
+            <a href="../login/index.html">Log in</a>
+        </div>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="index.js"></script>
+  </body>
+</html>
