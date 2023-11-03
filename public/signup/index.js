@@ -17,7 +17,7 @@ async function signupSubmit() {
   const obj = { name, email, password };
   try {
     const {data} = await axios.post(`${baseurl}/signup`, obj);
-    console.log(data);
+    alert("Successfully signed up!!")
   } catch (error) {
     if (error.response.status === 403) {
       emailError.textContent = "*This email is already registered";
