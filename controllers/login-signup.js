@@ -1,5 +1,6 @@
 const Users = require("../models/users");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 exports.postSignup = async (req, res) => {
   try {
@@ -42,8 +43,17 @@ exports.postLogin = async (req, res) => {
     if (!isMatch) {
       return res.status(401).json({ err: "Wrong password" });
     }
-    res.status(200).json({ message: "User logged successfully" });
+    res
+      .status(200)
+      .json({
+        message: "User logged successfully",
+        accessToken: generateAccessToken(existing.dataValues.id),
+      });
   } catch (error) {
     res.status(500).json({ "error message": "error in login" });
   }
 };
+
+function generateAccessToken(id_given) {
+  return jwt.sign({ userId: id_given }, process.env.ACCESS_TOKEN_SECRET);
+}

@@ -16,8 +16,13 @@ async function signupSubmit() {
 
   const obj = { name, email, password };
   try {
-    const {data} = await axios.post(`${baseurl}/signup`, obj);
-    alert("Successfully signed up!!")
+    await axios.post(`${baseurl}/signup`, obj);
+    const { data: loginUser } = await axios.post(`${baseurl}/login`, {
+      email,
+      password,
+    });
+    localStorage.setItem("token", loginUser.accessToken);
+    window.location.href = "../chat-app-window/index.html";
   } catch (error) {
     if (error.response.status === 403) {
       emailError.textContent = "*This email is already registered";
