@@ -29,6 +29,7 @@ app.use((req, res) => {
 });
 
 Users.hasMany(Messages);
+Messages.belongsTo(Users);
 
 sequelize
   .sync()
