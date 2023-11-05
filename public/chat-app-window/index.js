@@ -1,4 +1,5 @@
 const baseurl = BASE_URL;
+const chatContainer = document.getElementById("chat-container");
 
 document.addEventListener("DOMContentLoaded", () => {
   displayMessages();
@@ -18,7 +19,8 @@ async function postMessage() {
       },
     }
   );
-  window.location.reload();
+  console.log(newMessage);
+  document.getElementById("message-input").value = "";
 }
 
 async function getMessages() {
@@ -36,14 +38,15 @@ async function getMessages() {
 
 async function displayMessages() {
   const userMessageArray = await getMessages();
-  console.log("userMessageArray >>>> ", userMessageArray);
-  const chatContainer = document.getElementById("chat-container");
-
   userMessageArray.forEach((element) => {
-    const chatElement = document.createElement("div");
-    chatElement.className = 'chat-element'
-    const htmlContent = `<b>${element.name}</b> : ${element.message}`;
-    chatElement.innerHTML = htmlContent;
-    chatContainer.appendChild(chatElement);
+    displaySingleMessage(element);
   });
+}
+
+function displaySingleMessage(element) {
+  const chatElement = document.createElement("div");
+  chatElement.className = "chat-element";
+  const htmlContent = `<b>${element.name}</b> : ${element.message}`;
+  chatElement.innerHTML = htmlContent;
+  chatContainer.appendChild(chatElement);
 }
