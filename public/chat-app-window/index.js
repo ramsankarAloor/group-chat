@@ -1,8 +1,12 @@
 const baseurl = BASE_URL;
 const chatContainer = document.getElementById("chat-container");
+let lastMessageId = 0;
 
-document.addEventListener("DOMContentLoaded", () => {
-  displayMessages();
+document.addEventListener("DOMContentLoaded", async () => {
+  await displayMessages();
+  setInterval(async () => {
+    await displayNewMessages();
+  }, 1000);
 });
 
 async function postMessage() {
@@ -19,8 +23,24 @@ async function postMessage() {
       },
     }
   );
-  console.log(newMessage);
+
   document.getElementById("message-input").value = "";
+}
+
+async function getNewMessages() {
+  const token = localStorage.getItem("token");
+  const { data: newMessagesArray } = await axios.get(
+    `${baseurl}/chat-box/get-new-messages`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      params: {
+        lastMessageId: lastMessageId,
+      },
+    }
+  );
+  return newMessagesArray;
 }
 
 async function getMessages() {
@@ -40,6 +60,15 @@ async function displayMessages() {
   const userMessageArray = await getMessages();
   userMessageArray.forEach((element) => {
     displaySingleMessage(element);
+    lastMessageId = element.id;
+  });
+}
+
+async function displayNewMessages() {
+  const newMessagesArray = await getNewMessages();
+  newMessagesArray.forEach((element) => {
+    displaySingleMessage(element);
+    lastMessageId = element.id;
   });
 }
 
