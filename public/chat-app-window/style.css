@@ -18,16 +18,17 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
 }
 .left-container{
-    width: 25%;
+    width: 20%;
     height: 100%;
     display: flex;
     flex-direction: column;
     border: 1px solid rgb(222, 220, 220);
 }
 .right-container{
-    width: 75%;
+    width: 80%;
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -38,12 +39,15 @@ body {
 .chat-container{
     order: 2;
     flex-grow: 1;
+    overflow-y: auto;
 }
 .chat-footer{
     display: flex;
     order: 3;
     width: 100%;
     height: 2.7rem;
+    position: sticky;
+    bottom: 0;
 }
 .chat-input-container{
     order: 1;

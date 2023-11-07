@@ -2,8 +2,8 @@ const baseurl = BASE_URL;
 const chatContainer = document.getElementById("chat-container");
 let lastMessageId = 0;
 
-document.addEventListener("DOMContentLoaded", async () => {
-  await displayMessages();
+document.addEventListener("DOMContentLoaded", () => {
+  displayMessagesFromLocalStorage(); // Display messages from local storage
   setInterval(async () => {
     await displayNewMessages();
   }, 1000);
@@ -12,6 +12,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 async function postMessage() {
   const token = localStorage.getItem("token");
   const message = document.getElementById("message-input").value;
+
+  if (!message.trim()) {
+    // If the message is empty or contains only whitespace, don't post it
+    return;
+  }
 
   const obj = { message };
   const { data: newMessage } = await axios.post(
@@ -25,6 +30,9 @@ async function postMessage() {
   );
 
   document.getElementById("message-input").value = "";
+
+  // Add the new message to local storage
+  addMessageToLocalStorage(newMessage);
 }
 
 async function getNewMessages() {
@@ -56,12 +64,27 @@ async function getMessages() {
   return messagesArray;
 }
 
-async function displayMessages() {
-  const userMessageArray = await getMessages();
-  userMessageArray.forEach((element) => {
-    displaySingleMessage(element);
-    lastMessageId = element.id;
-  });
+function addMessageToLocalStorage(newMessage) {
+  const storedMessages = JSON.parse(localStorage.getItem("chatMessages")) || [];
+  storedMessages.push(newMessage);
+
+  if (storedMessages.length > 10) {
+    // Keep only the latest 10 messages
+    storedMessages.splice(0, storedMessages.length - 10);
+  }
+
+  localStorage.setItem("chatMessages", JSON.stringify(storedMessages));
+}
+
+function displayMessagesFromLocalStorage() {
+  const storedMessages = JSON.parse(localStorage.getItem("chatMessages")) || [];
+
+  if (storedMessages.length > 0) {
+    storedMessages.forEach((message) => {
+      displaySingleMessage(message);
+      lastMessageId = message.id;
+    });
+  }
 }
 
 async function displayNewMessages() {
@@ -69,6 +92,7 @@ async function displayNewMessages() {
   newMessagesArray.forEach((element) => {
     displaySingleMessage(element);
     lastMessageId = element.id;
+    addMessageToLocalStorage(element); // Add new messages to local storage
   });
 }
 
