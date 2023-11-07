@@ -1,40 +1,118 @@
+// Define a doubly linked list and its nodes
+class Node {
+  constructor(value) {
+    this.value = value;
+    this.next = null;
+    this.prev = null;
+  }
+}
+
+class DoublyLinkedList {
+  constructor() {
+    this.head = null;
+    this.tail = null;
+  }
+
+  enqueue(value) {
+    const newNode = new Node(value);
+    if (!this.head) {
+      this.head = newNode;
+      this.tail = newNode;
+    } else {
+      newNode.prev = this.tail;
+      this.tail.next = newNode;
+      this.tail = newNode;
+    }
+  }
+
+  dequeue() {
+    if (!this.head) {
+      return null;
+    }
+
+    const value = this.head.value;
+    this.head = this.head.next;
+    if (this.head) {
+      this.head.prev = null;
+    }
+
+    return value;
+  }
+}
+
+// Function to serialize a doubly linked list to JSON
+function serializeDoublyLinkedList(linkedList) {
+  const serializedData = [];
+  let current = linkedList.head;
+  while (current) {
+    serializedData.push(current.value);
+    current = current.next;
+  }
+  return JSON.stringify(serializedData);
+}
+
+// Function to deserialize JSON to a doubly linked list
+function deserializeDoublyLinkedList(serializedData) {
+  const data = JSON.parse(serializedData);
+  
+  if (!Array.isArray(data)) {
+    return new DoublyLinkedList(); // Return an empty list if the data is not an array
+  }
+  
+  const linkedList = new DoublyLinkedList();
+  for (const item of data) {
+    linkedList.enqueue(item);
+  }
+  return linkedList;
+}
+
+
+// Constants and elements
 const baseurl = BASE_URL;
 const chatContainer = document.getElementById("chat-container");
 let lastMessageId = 0;
 
-document.addEventListener("DOMContentLoaded", () => {
-  displayMessagesFromLocalStorage(); // Display messages from local storage
-  setInterval(async () => {
-    await displayNewMessages();
-  }, 1000);
-});
+// Initialize a doubly linked list for storing messages
+const messageQueue = new DoublyLinkedList();
 
-async function postMessage() {
-  const token = localStorage.getItem("token");
-  const message = document.getElementById("message-input").value;
+// Add a message to local storage using the doubly linked list
+function addMessageToLocalStorage(newMessage) {
+  const serializedMessages = localStorage.getItem("chatMessages");
+  const messageQueue = deserializeDoublyLinkedList(serializedMessages) || new DoublyLinkedList();
+  messageQueue.enqueue(newMessage);
 
-  if (!message.trim()) {
-    // If the message is empty or contains only whitespace, don't post it
-    return;
+  while (messageQueue.head) {
+    if (messageQueue.head.value.id <= newMessage.id - 10) {
+      messageQueue.dequeue();
+    } else {
+      break;
+    }
   }
 
-  const obj = { message };
-  const { data: newMessage } = await axios.post(
-    `${baseurl}/chat-box/message`,
-    obj,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
-
-  document.getElementById("message-input").value = "";
-
-  // Add the new message to local storage
-  addMessageToLocalStorage(newMessage);
+  localStorage.setItem("chatMessages", serializeDoublyLinkedList(messageQueue));
 }
 
+// Function to display a single chat message
+function displaySingleMessage(element) {
+  const chatElement = document.createElement("div");
+  chatElement.className = "chat-element";
+  const htmlContent = `<b>${element.name}</b> : ${element.message}`;
+  chatElement.innerHTML = htmlContent;
+  chatContainer.appendChild(chatElement);
+}
+
+// Function to retrieve new messages from the server and display them
+async function displayNewMessages() {
+  const newMessagesArray = await getNewMessages();
+  newMessagesArray.forEach((element) => {
+    messageQueue.enqueue(element); // Add messages to the queue
+    displaySingleMessage(element);
+    lastMessageId = element.id;
+    addMessageToLocalStorage(element); // Add new messages to local storage
+  });
+}
+
+// Function to get new messages from the server
 async function getNewMessages() {
   const token = localStorage.getItem("token");
   const { data: newMessagesArray } = await axios.get(
@@ -51,55 +129,53 @@ async function getNewMessages() {
   return newMessagesArray;
 }
 
-async function getMessages() {
+// Function to display messages from local storage
+function displayMessagesFromLocalStorage() {
+  const serializedMessages = localStorage.getItem("chatMessages");
+  const messageQueue = deserializeDoublyLinkedList(serializedMessages);
+
+  if (messageQueue && messageQueue.head) {
+    let current = messageQueue.head;
+    while (current) {
+      displaySingleMessage(current.value);
+      lastMessageId = current.value.id;
+      current = current.next;
+    }
+  }
+}
+
+// Event handler for posting a message
+async function postMessage() {
   const token = localStorage.getItem("token");
-  const { data: messagesArray } = await axios.get(
-    `${baseurl}/chat-box/get-messages`,
+  const messageInput = document.getElementById("message-input");
+  const message = messageInput.value.trim();
+
+  if (message === "") {
+    return; // Don't post empty messages
+  }
+
+  const obj = { message };
+  const { data: newMessage } = await axios.post(
+    `${baseurl}/chat-box/message`,
+    obj,
     {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     }
   );
-  return messagesArray;
+
+  messageInput.value = "";
+
+  // Add the new message to the queue and local storage
+  messageQueue.enqueue(newMessage);
+  addMessageToLocalStorage(newMessage);
+  displaySingleMessage(newMessage);
+  lastMessageId = newMessage.id;
 }
 
-function addMessageToLocalStorage(newMessage) {
-  const storedMessages = JSON.parse(localStorage.getItem("chatMessages")) || [];
-  storedMessages.push(newMessage);
-
-  if (storedMessages.length > 10) {
-    // Keep only the latest 10 messages
-    storedMessages.splice(0, storedMessages.length - 10);
-  }
-
-  localStorage.setItem("chatMessages", JSON.stringify(storedMessages));
-}
-
-function displayMessagesFromLocalStorage() {
-  const storedMessages = JSON.parse(localStorage.getItem("chatMessages")) || [];
-
-  if (storedMessages.length > 0) {
-    storedMessages.forEach((message) => {
-      displaySingleMessage(message);
-      lastMessageId = message.id;
-    });
-  }
-}
-
-async function displayNewMessages() {
-  const newMessagesArray = await getNewMessages();
-  newMessagesArray.forEach((element) => {
-    displaySingleMessage(element);
-    lastMessageId = element.id;
-    addMessageToLocalStorage(element); // Add new messages to local storage
-  });
-}
-
-function displaySingleMessage(element) {
-  const chatElement = document.createElement("div");
-  chatElement.className = "chat-element";
-  const htmlContent = `<b>${element.name}</b> : ${element.message}`;
-  chatElement.innerHTML = htmlContent;
-  chatContainer.appendChild(chatElement);
-}
+// Add a DOMContentLoaded event listener to initialize the page
+document.addEventListener("DOMContentLoaded", () => {
+  displayMessagesFromLocalStorage(); // Display messages from local storage
+  setInterval(displayNewMessages, 1000); // Periodically check for new messages
+});

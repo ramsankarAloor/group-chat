@@ -12,7 +12,7 @@ exports.postMessage = async (req, res) => {
     const user = await Users.findByPk(req.user.id, {
       attributes: ["name"],
     });
-    res.status(201).json({ name: user.name, message: newMessage.message });
+    res.status(201).json({ name: user.name, message: newMessage.message, id : newMessage.id});
   } catch (error) {
     res.status(500).json({ err: "error in posting message" });
   }
