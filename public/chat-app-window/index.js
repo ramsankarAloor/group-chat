@@ -12,7 +12,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 async function postMessage() {
   const token = localStorage.getItem("token");
   const message = document.getElementById("message-input").value;
-
+  if(!message.trim()){
+    return
+  }
   const obj = { message };
   const { data: newMessage } = await axios.post(
     `${baseurl}/chat-box/message`,
