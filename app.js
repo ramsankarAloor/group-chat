@@ -6,19 +6,21 @@ const sequelize = require("./util/database");
 
 const Users = require("./models/users");
 const Messages = require("./models/messages");
+const Groups = require("./models/groups");
+const GroupUser = require("./models/group-user");
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 const loginSignupRoutes = require("./routes/login-signup");
-const chatRoutes = require('./routes/chat');
+const chatRoutes = require("./routes/chat");
 
 app.checkout("/", (req, res) => {
   console.log("checkout");
 });
 
 app.use(loginSignupRoutes);
-app.use('/chat-box', chatRoutes);
+app.use("/chat-box", chatRoutes);
 
 app.use((req, res) => {
   res.sendFile(path.resolve(__dirname, `public/${req.url}`));
@@ -30,8 +32,12 @@ app.use((req, res) => {
 
 Users.hasMany(Messages);
 Messages.belongsTo(Users);
+Groups.belongsToMany(Users, { through: GroupUser });
+Users.belongsToMany(Groups, { through: GroupUser });
+Groups.hasMany(Messages);
+Messages.belongsTo(Groups);
 
 sequelize
-  .sync()
+  .sync({force:true})
   .then(() => app.listen(3000))
   .catch((err) => console.log(err));
