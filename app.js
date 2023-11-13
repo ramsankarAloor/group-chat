@@ -14,6 +14,8 @@ app.use(cors());
 app.use(express.json());
 const loginSignupRoutes = require("./routes/login-signup");
 const chatRoutes = require("./routes/chat");
+const groupRoutes = require("./routes/groups");
+const { group } = require("console");
 
 app.checkout("/", (req, res) => {
   console.log("checkout");
@@ -21,6 +23,7 @@ app.checkout("/", (req, res) => {
 
 app.use(loginSignupRoutes);
 app.use("/chat-box", chatRoutes);
+app.use("/groups", groupRoutes);
 
 app.use((req, res) => {
   res.sendFile(path.resolve(__dirname, `public/${req.url}`));
@@ -38,6 +41,6 @@ Groups.hasMany(Messages);
 Messages.belongsTo(Groups);
 
 sequelize
-  .sync({force:true})
+  .sync()
   .then(() => app.listen(3000))
   .catch((err) => console.log(err));

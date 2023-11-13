@@ -20,56 +20,108 @@ body {
   justify-content: center;
   overflow: hidden;
 }
-.left-container{
-    width: 20%;
-    height: 100%;
+.overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black background */
+  z-index: 1; /* Ensure the overlay is on top */
+}
+.popup-body {
+  width: 40%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 20px;
+  background-color: white;
+  z-index: 2; /* Ensure the content is on top of the overlay */
+}
+.popup-body h2 {
+  margin-top: 0;
+}
+.popup-body input {
+  border: 1px solid rgb(222, 220, 220);
+  height: 2rem;
+  width: 100%;
+}
+.popup-buttons{
+    margin-top: 1rem;
     display: flex;
-    flex-direction: column;
-    border: 1px solid rgb(222, 220, 220);
+    justify-content: end;
 }
-.right-container{
-    width: 80%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
+.popup-buttons button{
+    margin-left: 0.5rem;
 }
-#chat-head{
-    order: 1;
+.left-container {
+  width: 20%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgb(222, 220, 220);
 }
-.chat-container{
-    order: 2;
-    flex-grow: 1;
-    overflow-y: auto;
+.joined-list {
+  order: 2;
+  flex-grow: 1;
 }
-.chat-footer{
-    display: flex;
-    order: 3;
-    width: 100%;
-    height: 2.7rem;
-    position: sticky;
-    bottom: 0;
+.create-group-div {
+  order: 3;
+  width: 100%;
+  height: 4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.chat-input-container{
-    order: 1;
-    flex-grow: 1;
-    height: 100%;
+.create-group-div button {
+  width: 70%;
 }
-.chat-input-container input{
-    width: 100%;
-    height: 100%;
-    border: 1px solid rgb(222, 220, 220)
+
+.right-container {
+  width: 80%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
-.send-button-container{
-    order: 2;
-    width: 4rem;
-    height: 100%;
+#chat-head {
+  order: 1;
 }
-.send-button-container button{
-    width: 100%;
-    height: 100%;
+.chat-container {
+  order: 2;
+  flex-grow: 1;
+  overflow-y: auto;
 }
-.chat-element{
-    width: 100%;
-    height: 2rem;
-    padding-left: 0.5rem;
+.chat-footer {
+  display: flex;
+  order: 3;
+  width: 100%;
+  height: 2.7rem;
+  position: sticky;
+  bottom: 0;
+}
+.chat-input-container {
+  order: 1;
+  flex-grow: 1;
+  height: 100%;
+}
+.chat-input-container input {
+  width: 100%;
+  height: 100%;
+  border: 1px solid rgb(222, 220, 220);
+}
+.send-button-container {
+  order: 2;
+  width: 4rem;
+  height: 100%;
+}
+.send-button-container button {
+  width: 100%;
+  height: 100%;
+}
+.chat-element {
+  width: 100%;
+  height: 2rem;
+  padding-left: 0.5rem;
 }

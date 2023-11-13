@@ -16,6 +16,9 @@
       <div class="left-container">
         <div class="heading"><h2>Groups</h2></div>
         <div class="joined-list"></div>
+        <div class="create-group-div">
+          <button onclick="showPopup()">Create a new group</button>
+        </div>
       </div>
       <div class="right-container">
         <div class="heading" id="chat-head"><h2>Chat</h2></div>
@@ -30,6 +33,16 @@
           </div>
           <div class="send-button-container">
             <button onclick="postMessage()">Send</button>
+          </div>
+        </div>
+      </div>
+      <div id="overlay" class="overlay">
+        <div class="popup-body">
+          <div class="heading"><h2>Create new group</h2></div>
+          <input type="text" id="group-name" placeholder=" Enter group name" />
+          <div class="popup-buttons">
+            <button onclick="createNewGroup()">Create group</button>
+            <button onclick="hidePopup()">Close</button>
           </div>
         </div>
       </div>

@@ -54,18 +54,17 @@ function serializeDoublyLinkedList(linkedList) {
 // Function to deserialize JSON to a doubly linked list
 function deserializeDoublyLinkedList(serializedData) {
   const data = JSON.parse(serializedData);
-  
+
   if (!Array.isArray(data)) {
     return new DoublyLinkedList(); // Return an empty list if the data is not an array
   }
-  
+
   const linkedList = new DoublyLinkedList();
   for (const item of data) {
     linkedList.enqueue(item);
   }
   return linkedList;
 }
-
 
 // Constants and elements
 const baseurl = BASE_URL;
@@ -78,7 +77,8 @@ const messageQueue = new DoublyLinkedList();
 // Add a message to local storage using the doubly linked list
 function addMessageToLocalStorage(newMessage) {
   const serializedMessages = localStorage.getItem("chatMessages");
-  const messageQueue = deserializeDoublyLinkedList(serializedMessages) || new DoublyLinkedList();
+  const messageQueue =
+    deserializeDoublyLinkedList(serializedMessages) || new DoublyLinkedList();
   messageQueue.enqueue(newMessage);
 
   while (messageQueue.head) {
@@ -179,3 +179,34 @@ document.addEventListener("DOMContentLoaded", () => {
   displayMessagesFromLocalStorage(); // Display messages from local storage
   setInterval(displayNewMessages, 1000); // Periodically check for new messages
 });
+
+async function createNewGroup() {
+  const token = localStorage.getItem("token");
+  const groupNameInput = document.getElementById("group-name");
+  const groupName = groupNameInput.value.trim();
+  if (groupName === "") {
+    return;
+  }
+  const obj = { groupName };
+  const { data: newGroup } = await axios.post(
+    `${baseurl}/groups/create-new-group`,
+    obj,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  console.log(newGroup.groupName);
+  groupNameInput.value = "";
+  hidePopup();
+}
+
+function showPopup() {
+  document.getElementById("overlay").style.display = "block";
+}
+
+function hidePopup() {
+  // Hide the overlay
+  document.getElementById("overlay").style.display = "none";
+}
