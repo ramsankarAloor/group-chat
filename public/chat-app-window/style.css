@@ -67,6 +67,14 @@ body {
   order: 2;
   flex-grow: 1;
 }
+.group-div{
+    width: 100%;
+    height: auto;
+    padding: 0.5rem 0;
+}
+.group-div h4{
+    margin: 0;
+}
 .create-group-div {
   order: 3;
   width: 100%;

@@ -176,8 +176,9 @@ async function postMessage() {
 
 // Add a DOMContentLoaded event listener to initialize the page
 document.addEventListener("DOMContentLoaded", () => {
+  listGroups();
   displayMessagesFromLocalStorage(); // Display messages from local storage
-  setInterval(displayNewMessages, 1000); // Periodically check for new messages
+  // setInterval(displayNewMessages, 1000); // Periodically check for new messages
 });
 
 async function createNewGroup() {
@@ -197,7 +198,7 @@ async function createNewGroup() {
       },
     }
   );
-  console.log(newGroup.groupName);
+  addToGroups(newGroup.groupName);
   groupNameInput.value = "";
   hidePopup();
 }
@@ -209,4 +210,26 @@ function showPopup() {
 function hidePopup() {
   // Hide the overlay
   document.getElementById("overlay").style.display = "none";
+}
+
+function addToGroups(groupname) {
+  const joinedList = document.getElementById("joined-list");
+  const groupDiv = document.createElement("div");
+  groupDiv.classList = "heading group-div";
+  const htmlContent = `<h4>${groupname}</h4>`;
+  groupDiv.innerHTML = htmlContent;
+  joinedList.appendChild(groupDiv);
+}
+
+async function listGroups() {
+  const token = localStorage.getItem("token");
+  const {data : groupsList} = await axios.get(`${baseurl}/groups/list-groups`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  // console.log("groups => ", groupsList);
+  groupsList.forEach((element)=>{
+    addToGroups(element.group.groupName);
+  })
 }
