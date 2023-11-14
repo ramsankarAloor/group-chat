@@ -5,12 +5,12 @@ exports.createNewGroup = async (req, res) => {
   try {
     const groupName = req.body.groupName;
     const newGroup = await Groups.create({
-      groupName,
-      userId: req.user.id,
+      groupName
     });
     await GroupUser.create({
       userId: req.user.id,
       groupId: newGroup.id,
+      admin : true
     });
     res.status(201).json(newGroup);
   } catch (error) {

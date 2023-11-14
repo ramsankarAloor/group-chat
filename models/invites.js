@@ -7,6 +7,12 @@ const Invites = sequelize.define("invites", {
     autoIncrement: true,
     allowNull: false,
     primaryKey: true,
+  },
+  fromId : {
+    type: Sequelize.INTEGER
+  },
+  toId : {
+    type : Sequelize.INTEGER
   }
 });
 

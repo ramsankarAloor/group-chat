@@ -219,17 +219,32 @@ function addToGroups(groupname) {
   const htmlContent = `<h4>${groupname}</h4>`;
   groupDiv.innerHTML = htmlContent;
   joinedList.appendChild(groupDiv);
+
+  groupDiv.addEventListener("click", () => selectGroup(groupname));
 }
 
 async function listGroups() {
   const token = localStorage.getItem("token");
-  const {data : groupsList} = await axios.get(`${baseurl}/groups/list-groups`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  const { data: groupsList } = await axios.get(
+    `${baseurl}/groups/list-groups`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
   // console.log("groups => ", groupsList);
-  groupsList.forEach((element)=>{
+  groupsList.forEach((element) => {
     addToGroups(element.group.groupName);
-  })
+  });
+}
+
+async function selectGroup(groupname) {
+  const token = localStorage.getItem("token");
+  
+  const groupNameChatHeading = document.getElementById(
+    "group-name-chat-heading"
+  );
+  const htmlGroupHeading = `<h2>${groupname}</h2>`;
+  groupNameChatHeading.innerHTML = htmlGroupHeading;
 }

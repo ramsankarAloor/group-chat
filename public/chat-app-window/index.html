@@ -14,27 +14,35 @@
   <body>
     <div class="container">
       <div class="left-container">
-        <div class="heading"><h2>Groups</h2></div>
-        <div class="joined-list" id="joined-list"></div>
+        <div class="heading"><h2 style="color: #e96666">Groups</h2></div>
+        <div class="h4-list" id="joined-list"></div>
+        <div class="heading"><h2 style="color: #e96666">Invites</h2></div>
+        <div class="h4-list" id="invites-list"></div>
         <div class="create-group-div">
           <button onclick="showPopup()">Create a new group</button>
         </div>
       </div>
-      <div class="right-container">
-        <div class="heading" id="chat-head"><h2>Chat</h2></div>
-        <div class="chat-container" id="chat-container"></div>
-        <div class="chat-footer">
-          <div class="chat-input-container">
-            <input
-              type="text"
-              placeholder="  Write a message.."
-              id="message-input"
-            />
+      <div class="right-container" id="right-container">
+          <div class="chat-head" id="chat-head">
+            <div id="group-name-chat-heading"></div>
+            <div class="group-buttons">
+              <button>Group Info</button>
+              <button>Invite</button>
+            </div>
           </div>
-          <div class="send-button-container">
-            <button onclick="postMessage()">Send</button>
+          <div class="chat-container" id="chat-container"></div>
+          <div class="chat-footer">
+            <div class="chat-input-container">
+              <input
+                type="text"
+                placeholder="  Write a message.."
+                id="message-input"
+              />
+            </div>
+            <div class="send-button-container">
+              <button onclick="postMessage()">Send</button>
+            </div>
           </div>
-        </div>
       </div>
       <div id="overlay" class="overlay">
         <div class="popup-body">

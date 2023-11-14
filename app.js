@@ -46,12 +46,11 @@ Groups.hasMany(GroupUser, { foreignKey: 'groupId' });
 Groups.hasMany(Messages);
 Messages.belongsTo(Groups);
 //invitation relationships
-Invites.belongsTo(Users);
-Users.hasMany(Invites)
+
 Invites.belongsTo(Groups);
 Groups.hasMany(Invites);
 
 sequelize
-  .sync()
+  .sync({alter : true})
   .then(() => app.listen(3000))
   .catch((err) => console.log(err));
