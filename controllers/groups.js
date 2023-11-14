@@ -25,7 +25,7 @@ exports.listGroups = async (req, res) => {
       include: [
         {
           model: Groups,
-          attributes: ["groupName"], // Specify the attributes you want to retrieve
+          attributes: ["groupName", "id"], // Specify the attributes you want to retrieve
           required: true, // Use inner join, change to false for left join
         },
       ],

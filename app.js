@@ -51,6 +51,6 @@ Invites.belongsTo(Groups);
 Groups.hasMany(Invites);
 
 sequelize
-  .sync({alter : true})
+  .sync()
   .then(() => app.listen(3000))
   .catch((err) => console.log(err));
