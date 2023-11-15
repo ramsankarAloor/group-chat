@@ -19,7 +19,7 @@
         <div class="heading"><h2 style="color: #e96666">Invites</h2></div>
         <div class="h4-list" id="invites-list"></div>
         <div class="create-group-div">
-          <button onclick="showPopup()">Create a new group</button>
+          <button onclick="showNewGroupPopup()">Create a new group</button>
         </div>
       </div>
       <div class="right-container" id="right-container">
@@ -44,16 +44,19 @@
             </div>
           </div>
       </div>
-      <div id="overlay" class="overlay">
+      <!-- create new group popup  -->
+      <div id="new-group-overlay" class="overlay">
         <div class="popup-body">
           <div class="heading"><h2>Create new group</h2></div>
           <input type="text" id="group-name" placeholder=" Enter group name" />
           <div class="popup-buttons">
             <button onclick="createNewGroup()">Create group</button>
-            <button onclick="hidePopup()">Close</button>
+            <button onclick="hideNewGroupPopup()">Close</button>
           </div>
         </div>
       </div>
+      <!-- invite popup  -->
+
     </div>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="index.js"></script>

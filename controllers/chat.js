@@ -44,8 +44,8 @@ exports.getMessages = async (req, res) => {
 
 exports.getNewMessages = async (req, res) => {
   try {
-    const groupId = localStorage.getItem("groupId");
-    const lastMessageId = req.query.lastMessageId || 0; // Get the lastMessageId from the query parameter
+    const groupId = req.query.groupId;
+    const lastMessageId = req.query.lastMessageId; // Get the lastMessageId from the query parameter
     const newMessagesArray = await Messages.findAll({
       where: {
         id: {
@@ -62,6 +62,7 @@ exports.getNewMessages = async (req, res) => {
       id : element.id,
       name: element.user.name,
       message: element.message,
+      groupId
     }));
 
     res.status(200).json(transformedArray);

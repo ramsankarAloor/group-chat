@@ -30,7 +30,36 @@ async function getMessages() {
     }
   );
   console.log(messages);
-  messages.forEach((element)=>displaySingleMessage(element))
+
+  messages.forEach((element) => {
+    displaySingleMessage(element);
+    lastMessageId = element.id;
+  });
+}
+
+async function getNewMessages() {
+  const token = localStorage.getItem("token");
+  const groupId = localStorage.getItem("groupId");
+
+  const { data: newMessages } = await axios.get(
+    `${baseurl}/chat-box/get-new-messages`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      params: {
+        lastMessageId,
+        groupId
+      },
+    }
+  );
+
+  console.log(newMessages);
+
+  newMessages.forEach((element)=>{
+    displaySingleMessage(element);
+    lastMessageId = element.id;
+  })
 }
 
 async function postMessage() {
@@ -75,16 +104,16 @@ async function createNewGroup() {
   );
   addToGroups(newGroup.groupName);
   groupNameInput.value = "";
-  hidePopup();
+  hideNewGroupPopup();
 }
 
-function showPopup() {
-  document.getElementById("overlay").style.display = "block";
+function showNewGroupPopup() {
+  document.getElementById("new-group-overlay").style.display = "block";
 }
 
-function hidePopup() {
+function hideNewGroupPopup() {
   // Hide the overlay
-  document.getElementById("overlay").style.display = "none";
+  document.getElementById("new-group-overlay").style.display = "none";
 }
 
 function addToGroups(groupname, groupId) {
@@ -123,6 +152,8 @@ async function selectGroup(groupname, groupId) {
   );
   const htmlGroupHeading = `<h2>${groupname}</h2>`;
   groupNameChatHeading.innerHTML = htmlGroupHeading;
-  document.getElementById('chat-container').innerHTML = '';
+  document.getElementById("chat-container").innerHTML = "";
+
   getMessages();
+  setInterval(()=>getNewMessages(), 1000);
 }
