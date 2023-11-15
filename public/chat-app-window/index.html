@@ -17,32 +17,33 @@
         <div class="heading"><h2 style="color: #e96666">Groups</h2></div>
         <div class="h4-list" id="joined-list"></div>
         <div class="heading"><h2 style="color: #e96666">Invites</h2></div>
+        <!-- invites list  -->
         <div class="h4-list" id="invites-list"></div>
         <div class="create-group-div">
           <button onclick="showNewGroupPopup()">Create a new group</button>
         </div>
       </div>
       <div class="right-container" id="right-container">
-          <div class="chat-head" id="chat-head">
-            <div id="group-name-chat-heading"></div>
-            <div class="group-buttons">
-              <button>Group Info</button>
-              <button>Invite</button>
-            </div>
+        <div class="chat-head" id="chat-head">
+          <div id="group-name-chat-heading"></div>
+          <div class="group-buttons">
+            <button>Group Info</button>
+            <button onclick="showInvitePopup()">Invite</button>
           </div>
-          <div class="chat-container" id="chat-container"></div>
-          <div class="chat-footer">
-            <div class="chat-input-container">
-              <input
-                type="text"
-                placeholder="  Write a message.."
-                id="message-input"
-              />
-            </div>
-            <div class="send-button-container">
-              <button onclick="postMessage()">Send</button>
-            </div>
+        </div>
+        <div class="chat-container" id="chat-container"></div>
+        <div class="chat-footer">
+          <div class="chat-input-container">
+            <input
+              type="text"
+              placeholder="  Write a message.."
+              id="message-input"
+            />
           </div>
+          <div class="send-button-container">
+            <button onclick="postMessage()">Send</button>
+          </div>
+        </div>
       </div>
       <!-- create new group popup  -->
       <div id="new-group-overlay" class="overlay">
@@ -56,7 +57,16 @@
         </div>
       </div>
       <!-- invite popup  -->
-
+      <div id="invite-overlay" class="overlay">
+        <div class="popup-body">
+          <div class="heading"><h2>Send group invite</h2></div>
+          <input type="email" id="invitee" placeholder=" Invitee email" />
+          <div class="popup-buttons">
+            <button onclick="sendInvite()">Send Invite</button>
+            <button onclick="hideInvitePopup()">Close</button>
+          </div>
+        </div>
+      </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="index.js"></script>

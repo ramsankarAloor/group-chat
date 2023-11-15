@@ -42,13 +42,18 @@ Users.belongsToMany(Groups, { through: GroupUser });
 
 GroupUser.belongsTo(Groups, { foreignKey: 'groupId' });
 Groups.hasMany(GroupUser, { foreignKey: 'groupId' });
+
 //group message relationship
+
 Groups.hasMany(Messages);
 Messages.belongsTo(Groups);
+
 //invitation relationships
 
-Invites.belongsTo(Groups);
-Groups.hasMany(Invites);
+Invites.belongsTo(Groups, { foreignKey : 'groupId'});
+Groups.hasMany(Invites, { foreignKey : 'groupId'});
+Users.hasMany(Invites, { foreignKey: 'fromId' });
+Invites.belongsTo(Users, { foreignKey: 'fromId' });
 
 sequelize
   .sync()

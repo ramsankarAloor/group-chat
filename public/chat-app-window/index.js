@@ -4,6 +4,7 @@ let lastMessageId = 0;
 
 document.addEventListener("DOMContentLoaded", () => {
   listGroups();
+  listInvites();
 });
 
 function displaySingleMessage(element) {
@@ -29,7 +30,7 @@ async function getMessages() {
       },
     }
   );
-  console.log(messages);
+  // console.log(messages);
 
   messages.forEach((element) => {
     displaySingleMessage(element);
@@ -49,17 +50,17 @@ async function getNewMessages() {
       },
       params: {
         lastMessageId,
-        groupId
+        groupId,
       },
     }
   );
 
-  console.log(newMessages);
+  // console.log(newMessages);
 
-  newMessages.forEach((element)=>{
+  newMessages.forEach((element) => {
     displaySingleMessage(element);
     lastMessageId = element.id;
-  })
+  });
 }
 
 async function postMessage() {
@@ -112,7 +113,6 @@ function showNewGroupPopup() {
 }
 
 function hideNewGroupPopup() {
-  // Hide the overlay
   document.getElementById("new-group-overlay").style.display = "none";
 }
 
@@ -145,7 +145,6 @@ async function listGroups() {
 
 async function selectGroup(groupname, groupId) {
   localStorage.setItem("groupId", groupId);
-  const token = localStorage.getItem("token");
 
   const groupNameChatHeading = document.getElementById(
     "group-name-chat-heading"
@@ -155,5 +154,80 @@ async function selectGroup(groupname, groupId) {
   document.getElementById("chat-container").innerHTML = "";
 
   getMessages();
-  setInterval(()=>getNewMessages(), 1000);
+  setInterval(() => getNewMessages(), 1000);
+}
+
+// invite
+
+function showInvitePopup() {
+  document.getElementById("invite-overlay").style.display = "block";
+}
+function hideInvitePopup() {
+  document.getElementById("invite-overlay").style.display = "none";
+}
+
+async function sendInvite() {
+  const token = localStorage.getItem("token");
+  const groupId = localStorage.getItem("groupId");
+  const inviteeEmail = document.getElementById("invitee").value;
+  if (!inviteeEmail) {
+    return;
+  }
+  const obj = { inviteeEmail, groupId };
+  const { data: invite } = await axios.post(
+    `${baseurl}/groups/send-invite`,
+    obj,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  console.log(invite);
+  hideInvitePopup();
+}
+
+function addToInvites(invite) {
+  const invitesList = document.getElementById("invites-list");
+  const inviteDiv = document.createElement("div");
+  const textDiv = document.createElement("div");
+  textDiv.innerHTML = `${invite.fromUser.name} invited you to join the group <b>${invite.group.groupName}</b>`;
+
+  const joinBtnDiv = document.createElement("div");
+  const joinButton = document.createElement("button");
+  joinButton.textContent = "Join";
+  joinBtnDiv.appendChild(joinButton);
+
+  inviteDiv.appendChild(textDiv); 
+  inviteDiv.appendChild(joinBtnDiv);
+  invitesList.appendChild(inviteDiv);
+
+  // joinButton.addEventListener("click", joinGroup);
+
+  async function joinGroup() {
+    const token = localStorage.getItem("token");
+    const groupId = invite.group.id;
+
+    const obj = {groupId, inviteId : invite.id}
+
+    await axios.post(`${baseurl}/groups/join-group`, obj, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+  }
+}
+
+async function listInvites() {
+  const token = localStorage.getItem("token");
+  const { data: invitesList } = await axios.get(
+    `${baseurl}/groups/list-invites`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  console.log(invitesList);
+  invitesList.forEach((invite) => addToInvites(invite));
 }
