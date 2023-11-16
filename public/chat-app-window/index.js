@@ -183,8 +183,9 @@ async function sendInvite() {
       },
     }
   );
-  console.log(invite);
+  // console.log(invite);
   hideInvitePopup();
+  alert(`Group invite sent to ${inviteeEmail}`);
 }
 
 function addToInvites(invite) {
@@ -202,7 +203,7 @@ function addToInvites(invite) {
   inviteDiv.appendChild(joinBtnDiv);
   invitesList.appendChild(inviteDiv);
 
-  // joinButton.addEventListener("click", joinGroup);
+  joinButton.addEventListener("click", joinGroup);
 
   async function joinGroup() {
     const token = localStorage.getItem("token");
@@ -210,11 +211,13 @@ function addToInvites(invite) {
 
     const obj = {groupId, inviteId : invite.id}
 
-    await axios.post(`${baseurl}/groups/join-group`, obj, {
+    const { data : success } = await axios.post(`${baseurl}/groups/join-group`, obj, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     })
+    console.log(success);
+    alert(`You have joined group `)
   }
 }
 
@@ -228,6 +231,10 @@ async function listInvites() {
       },
     }
   );
-  console.log(invitesList);
+  // console.log(invitesList);
   invitesList.forEach((invite) => addToInvites(invite));
+}
+
+function showGroupInfo(){
+  window.location.href = '../group-info/index.html';
 }

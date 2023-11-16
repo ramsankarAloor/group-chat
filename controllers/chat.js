@@ -1,21 +1,31 @@
 const Messages = require("../models/messages");
 const Users = require("../models/users");
 const Sequelize = require("sequelize");
+const sequelize = require('../util/database');
 
 exports.postMessage = async (req, res) => {
+  const t = await sequelize.transaction();
   try {
     const message = req.body.message;
     const groupId = Number(req.body.groupId);
+
     const newMessage = await Messages.create({
       message,
       userId: req.user.id,
       groupId
-    });
+    }, { transaction : t });
+
     const user = await Users.findByPk(req.user.id, {
       attributes: ["name"],
-    });
+    }, { transaction : t });
+
+    await t.commit();
+
     res.status(201).json({ name: user.name, message: newMessage.message, id : newMessage.id, groupId});
   } catch (error) {
+    if(t){
+      await t.rollback();
+    }
     res.status(500).json({ err: "error in posting message" });
   }
 };
