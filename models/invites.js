@@ -8,9 +8,6 @@ const Invites = sequelize.define("invites", {
     allowNull: false,
     primaryKey: true,
   },
-  fromId : {
-    type: Sequelize.INTEGER
-  },
   toId : {
     type : Sequelize.INTEGER
   }

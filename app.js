@@ -16,6 +16,7 @@ app.use(express.json());
 const loginSignupRoutes = require("./routes/login-signup");
 const chatRoutes = require("./routes/chat");
 const groupRoutes = require("./routes/groups");
+const groupInfoRoutes = require("./routes/group-info");
 const { group } = require("console");
 
 app.checkout("/", (req, res) => {
@@ -25,6 +26,7 @@ app.checkout("/", (req, res) => {
 app.use(loginSignupRoutes);
 app.use("/chat-box", chatRoutes);
 app.use("/groups", groupRoutes);
+app.use("/group-info", groupInfoRoutes);
 
 app.use((req, res) => {
   res.sendFile(path.resolve(__dirname, `public/${req.url}`));
@@ -40,17 +42,24 @@ Messages.belongsTo(Users);
 Groups.belongsToMany(Users, { through: GroupUser });
 Users.belongsToMany(Groups, { through: GroupUser });
 
-GroupUser.belongsTo(Groups, { foreignKey: 'groupId' });
-Groups.hasMany(GroupUser, { foreignKey: 'groupId' });
+GroupUser.belongsTo(Groups, { foreignKey: "groupId" });
+Groups.hasMany(GroupUser, { foreignKey: "groupId" });
+GroupUser.belongsTo(Users, { foreignKey: "userId" });
+Users.hasMany(GroupUser, { foreignKey: "userId" });
+
 //group message relationship
+
 Groups.hasMany(Messages);
 Messages.belongsTo(Groups);
+
 //invitation relationships
 
-Invites.belongsTo(Groups);
-Groups.hasMany(Invites);
+Invites.belongsTo(Groups, { foreignKey: "groupId" });
+Groups.hasMany(Invites, { foreignKey: "groupId" });
+Users.hasMany(Invites, { foreignKey: "fromId" });
+Invites.belongsTo(Users, { foreignKey: "fromId" });
 
 sequelize
-  .sync({alter : true})
-  .then(() => app.listen(3000))
+  .sync()
+  .then(() => app.listen(4000))
   .catch((err) => console.log(err));
