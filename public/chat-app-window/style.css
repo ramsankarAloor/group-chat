@@ -55,7 +55,7 @@ body {
   margin-left: 0.5rem;
 }
 .left-container {
-  width: 20%;
+  width: 30%;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -77,6 +77,30 @@ body {
   margin: 0;
 }
 
+#invites.list{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.invite-div{
+  width: 100%;
+  height: 3rem;
+  display: flex;
+  flex-direction: row;
+}
+.text-div{
+  width: 70%;
+}
+.join-button-div{
+  width: 30%;
+  display: flex;
+  justify-content: center;
+}
+.join-button-div button{
+  width: 80%;
+  height: 2rem;
+}
 .create-group-div {
   order: 3;
   width: 100%;

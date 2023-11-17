@@ -191,11 +191,14 @@ async function sendInvite() {
 function addToInvites(invite) {
   const invitesList = document.getElementById("invites-list");
   const inviteDiv = document.createElement("div");
+  inviteDiv.className = "invite-div";
   const textDiv = document.createElement("div");
+  textDiv.className = "text-div";
   textDiv.innerHTML = `${invite.fromUser.name} invited you to join the group <b>${invite.group.groupName}</b>`;
 
   const joinBtnDiv = document.createElement("div");
   const joinButton = document.createElement("button");
+  joinBtnDiv.className = "join-button-div";
   joinButton.textContent = "Join";
   joinBtnDiv.appendChild(joinButton);
 

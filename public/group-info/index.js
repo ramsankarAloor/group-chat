@@ -7,7 +7,6 @@ document.addEventListener("DOMContentLoaded", () => {
 async function listMembers() {
   const token = localStorage.getItem("token");
   const groupId = localStorage.getItem("groupId");
-  //need to take out admin details
 
   const {
     data: { adminStatus, members },

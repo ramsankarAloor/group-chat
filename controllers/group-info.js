@@ -4,7 +4,6 @@ const Groups = require("../models/groups");
 const sequelize = require("../util/database");
 
 exports.listMembers = async (req, res) => {
-    const t = await sequelize.transaction();
     try {
         const groupId = req.body.groupId;
         const userId = req.user.id;
@@ -14,7 +13,6 @@ exports.listMembers = async (req, res) => {
                 where: { userId, groupId },
                 attributes: ["admin"],
             },
-            { transaction: t }
         );
 
         const members = await GroupUser.findAll(
@@ -23,16 +21,10 @@ exports.listMembers = async (req, res) => {
                 include: [{ model: Users, attributes: ["id", "name", "email"] }],
                 where: { groupId },
             },
-            { transaction: t }
         );
-
-        await t.commit();
 
         res.status(200).json({ members, adminStatus: admin.admin });
     } catch (error) {
-        if (t) {
-            await t.rollback();
-        }
         res.status(500).json({ err: "error in listing group members", error });
     }
 };
