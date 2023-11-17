@@ -1,1 +1,1 @@
-const BASE_URL = 'http://localhost:4000'
+const BASE_URL = 'http://13.48.1.93:4000'
