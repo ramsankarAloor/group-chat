@@ -79,6 +79,11 @@ socketIO.on('connection', (socket) => {
     console.log('joining room >>>> ', room);
     socket.join(room);
   })
+
+  socket.on('send-invite', (newInvite)=>{
+    console.log('sent invite >>>> ', newInvite);
+    socket.broadcast.emit('receive-invite', newInvite);
+  })
 });
 
 sequelize

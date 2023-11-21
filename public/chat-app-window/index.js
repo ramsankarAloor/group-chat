@@ -13,11 +13,6 @@ socket.on("connect", () => {
   console.log("socket id >>> ", socket.id);
 });
 
-socket.on('receive-message', (message) => {
-  console.log('received message >>', message);
-  displaySingleMessage(message);
-})
-
 function displaySingleMessage(element) {
   const chatElement = document.createElement("div");
   chatElement.className = "chat-element";
@@ -96,9 +91,13 @@ async function postMessage1() {
   );
   messageInput.value = "";
   displaySingleMessage(newMessage);
-  socket.emit('send-message', newMessage); // groupId is the room
-
+  socket.emit("send-message", newMessage); // groupId is the room
 }
+
+socket.on("receive-message", (message) => {
+  console.log("received message >>", message);
+  displaySingleMessage(message);
+});
 
 async function createNewGroup() {
   const token = localStorage.getItem("token");
@@ -159,7 +158,7 @@ async function listGroups() {
 
 async function selectGroup(groupname, groupId) {
   localStorage.setItem("groupId", groupId);
-  socket.emit('join-group', groupId); // joining the room
+  socket.emit("join-group", groupId); // joining the room
 
   const groupNameChatHeading = document.getElementById(
     "group-name-chat-heading"
@@ -198,10 +197,16 @@ async function sendInvite() {
       },
     }
   );
-  // console.log(invite);
+  console.log("Invite >>> ", invite);
   hideInvitePopup();
+  socket.emit("send-invite", invite);
   alert(`Group invite sent to ${inviteeEmail}`);
 }
+
+socket.on("receive-invite", (invite) => {
+  console.log("received invite >>", invite);
+  addToInvites(invite);
+});
 
 function addToInvites(invite) {
   const invitesList = document.getElementById("invites-list");

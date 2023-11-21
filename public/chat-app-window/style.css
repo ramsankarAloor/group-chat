@@ -85,9 +85,10 @@ body {
 
 .invite-div{
   width: 100%;
-  height: 3rem;
+  min-height: 3rem;
   display: flex;
   flex-direction: row;
+  padding-bottom: 0.5rem;
 }
 .text-div{
   width: 70%;
