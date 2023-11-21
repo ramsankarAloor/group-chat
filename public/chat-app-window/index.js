@@ -2,10 +2,21 @@ const baseurl = BASE_URL;
 const chatContainer = document.getElementById("chat-container");
 let lastMessageId = 0;
 
+const socket = io(baseurl);
+
 document.addEventListener("DOMContentLoaded", () => {
   listGroups();
   listInvites();
 });
+
+socket.on("connect", () => {
+  console.log("socket id >>> ", socket.id);
+});
+
+socket.on('receive-message', (message) => {
+  console.log('received message >>', message);
+  displaySingleMessage(message);
+})
 
 function displaySingleMessage(element) {
   const chatElement = document.createElement("div");
@@ -63,7 +74,7 @@ async function getNewMessages() {
   });
 }
 
-async function postMessage() {
+async function postMessage1() {
   const token = localStorage.getItem("token");
   const groupId = localStorage.getItem("groupId");
   const messageInput = document.getElementById("message-input");
@@ -84,6 +95,9 @@ async function postMessage() {
     }
   );
   messageInput.value = "";
+  displaySingleMessage(newMessage);
+  socket.emit('send-message', newMessage); // groupId is the room
+
 }
 
 async function createNewGroup() {
@@ -145,6 +159,7 @@ async function listGroups() {
 
 async function selectGroup(groupname, groupId) {
   localStorage.setItem("groupId", groupId);
+  socket.emit('join-group', groupId); // joining the room
 
   const groupNameChatHeading = document.getElementById(
     "group-name-chat-heading"
@@ -154,7 +169,7 @@ async function selectGroup(groupname, groupId) {
   document.getElementById("chat-container").innerHTML = "";
 
   getMessages();
-  setInterval(() => getNewMessages(), 1000);
+  // setInterval(() => getNewMessages(), 1000);
 }
 
 // invite
@@ -202,7 +217,7 @@ function addToInvites(invite) {
   joinButton.textContent = "Join";
   joinBtnDiv.appendChild(joinButton);
 
-  inviteDiv.appendChild(textDiv); 
+  inviteDiv.appendChild(textDiv);
   inviteDiv.appendChild(joinBtnDiv);
   invitesList.appendChild(inviteDiv);
 
@@ -212,15 +227,19 @@ function addToInvites(invite) {
     const token = localStorage.getItem("token");
     const groupId = invite.group.id;
 
-    const obj = {groupId, inviteId : invite.id}
+    const obj = { groupId, inviteId: invite.id };
 
-    const { data : success } = await axios.post(`${baseurl}/groups/join-group`, obj, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
+    const { data: success } = await axios.post(
+      `${baseurl}/groups/join-group`,
+      obj,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
     console.log(success);
-    alert(`You have joined group `)
+    alert(`You have joined group `);
   }
 }
 
@@ -238,6 +257,6 @@ async function listInvites() {
   invitesList.forEach((invite) => addToInvites(invite));
 }
 
-function showGroupInfo(){
-  window.location.href = '../group-info/index.html';
+function showGroupInfo() {
+  window.location.href = "../group-info/index.html";
 }
