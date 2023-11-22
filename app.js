@@ -70,18 +70,14 @@ socketIO.on('connection', (socket) => {
   console.log("socket id >>>> ", socket.id);
   socket.on('send-message', (newMessage) => {
     // socket.broadcast.emit('receive-message', newMessage); // sending to all client sockets
-    console.log('room in send-message >>>> ', newMessage.groupId);
-    console.log('new message >>>>>> ', newMessage);
     socket.to(newMessage.groupId).emit('receive-message', newMessage);
   })
 
   socket.on('join-group', (room) => {
-    console.log('joining room >>>> ', room);
     socket.join(room);
   })
 
   socket.on('send-invite', (newInvite)=>{
-    console.log('sent invite >>>> ', newInvite);
     socket.broadcast.emit('receive-invite', newInvite);
   })
 });

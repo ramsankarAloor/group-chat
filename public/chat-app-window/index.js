@@ -36,34 +36,8 @@ async function getMessages() {
       },
     }
   );
-  // console.log(messages);
 
   messages.forEach((element) => {
-    displaySingleMessage(element);
-    lastMessageId = element.id;
-  });
-}
-
-async function getNewMessages() {
-  const token = localStorage.getItem("token");
-  const groupId = localStorage.getItem("groupId");
-
-  const { data: newMessages } = await axios.get(
-    `${baseurl}/chat-box/get-new-messages`,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      params: {
-        lastMessageId,
-        groupId,
-      },
-    }
-  );
-
-  // console.log(newMessages);
-
-  newMessages.forEach((element) => {
     displaySingleMessage(element);
     lastMessageId = element.id;
   });
@@ -150,7 +124,6 @@ async function listGroups() {
       },
     }
   );
-  // console.log("groups => ", groupsList);
   groupsList.forEach((element) => {
     addToGroups(element.group.groupName, element.group.id);
   });
@@ -168,7 +141,6 @@ async function selectGroup(groupname, groupId) {
   document.getElementById("chat-container").innerHTML = "";
 
   getMessages();
-  // setInterval(() => getNewMessages(), 1000);
 }
 
 // invite
@@ -197,14 +169,14 @@ async function sendInvite() {
       },
     }
   );
-  console.log("Invite >>> ", invite);
+
   hideInvitePopup();
-  socket.emit("send-invite", invite);
+  socket.emit("send-invite", invite); //sending invite to server
   alert(`Group invite sent to ${inviteeEmail}`);
 }
 
+// socket on receiving invite from server
 socket.on("receive-invite", (invite) => {
-  console.log("received invite >>", invite);
   addToInvites(invite);
 });
 
@@ -258,7 +230,6 @@ async function listInvites() {
       },
     }
   );
-  // console.log(invitesList);
   invitesList.forEach((invite) => addToInvites(invite));
 }
 

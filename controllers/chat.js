@@ -1,6 +1,5 @@
 const Messages = require("../models/messages");
 const Users = require("../models/users");
-const Sequelize = require("sequelize");
 const sequelize = require('../util/database');
 
 exports.postMessage = async (req, res) => {
@@ -52,31 +51,5 @@ exports.getMessages = async (req, res) => {
   }
 };
 
-exports.getNewMessages = async (req, res) => {
-  try {
-    const groupId = req.query.groupId;
-    const lastMessageId = req.query.lastMessageId; // Get the lastMessageId from the query parameter
-    const newMessagesArray = await Messages.findAll({
-      where: {
-        id: {
-          [Sequelize.Op.gt]: lastMessageId,
-        },
-        groupId
-      },
-      attributes: ["message", "id"],
-      include: [{ model: Users, attributes: ["name"] }],
-      order: [["createdAt", "ASC"]],
-    });
 
-    const transformedArray = newMessagesArray.map((element) => ({
-      id : element.id,
-      name: element.user.name,
-      message: element.message,
-      groupId
-    }));
 
-    res.status(200).json(transformedArray);
-  } catch (error) {
-    res.status(500).json({ error });
-  }
-};
