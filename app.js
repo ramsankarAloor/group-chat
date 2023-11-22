@@ -2,6 +2,8 @@ const express = require("express");
 const path = require("path");
 const cors = require("cors");
 require("dotenv").config();
+const http = require('http'); // Add this line
+const io = require('socket.io'); // Add this line
 const sequelize = require("./util/database");
 
 const Users = require("./models/users");
@@ -11,6 +13,9 @@ const GroupUser = require("./models/group-user");
 const Invites = require("./models/invites");
 
 const app = express();
+const server = http.createServer(app); // Change this line
+const socketIO = io(server); // Change this line
+
 app.use(cors());
 app.use(express.json());
 const loginSignupRoutes = require("./routes/login-signup");
@@ -19,8 +24,9 @@ const groupRoutes = require("./routes/groups");
 const groupInfoRoutes = require("./routes/group-info");
 const { group } = require("console");
 
-app.checkout("/", (req, res) => {
+app.get("/", (req, res) => { // Change this line
   console.log("checkout");
+  res.send("Checkout");
 });
 
 app.use(loginSignupRoutes);
@@ -35,6 +41,7 @@ app.use((req, res) => {
 app.use((req, res) => {
   res.status(404).send("404 - Not Found");
 });
+
 // message user relationship
 Users.hasMany(Messages);
 Messages.belongsTo(Users);
@@ -59,7 +66,23 @@ Groups.hasMany(Invites, { foreignKey: "groupId" });
 Users.hasMany(Invites, { foreignKey: "fromId" });
 Invites.belongsTo(Users, { foreignKey: "fromId" });
 
+socketIO.on('connection', (socket) => {
+  console.log("socket id >>>> ", socket.id);
+  socket.on('send-message', (newMessage) => {
+    // socket.broadcast.emit('receive-message', newMessage); // sending to all client sockets
+    socket.to(newMessage.groupId).emit('receive-message', newMessage);
+  })
+
+  socket.on('join-group', (room) => {
+    socket.join(room);
+  })
+
+  socket.on('send-invite', (newInvite)=>{
+    socket.broadcast.emit('receive-invite', newInvite);
+  })
+});
+
 sequelize
   .sync()
-  .then(() => app.listen(4000))
+  .then(() => server.listen(4000, () => console.log('Server is running on port 4000')))
   .catch((err) => console.log(err));

@@ -70,9 +70,15 @@ exports.sendInvite = async (req, res) => {
       toId: invitee.id,
     }, { transaction: t });
 
+    const fromUser = await Users.findByPk(senderId, { transaction : t});
+
+    const group = await Groups.findByPk(groupId, { transaction : t });
+
+    const invite = { newInvite, fromUser, group };
+
     await t.commit();
 
-    res.status(201).json({ newInvite, success: "new invite sent." });
+    res.status(201).json(invite);
 
   } catch (error) {
     if(t){

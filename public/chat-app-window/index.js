@@ -2,9 +2,15 @@ const baseurl = BASE_URL;
 const chatContainer = document.getElementById("chat-container");
 let lastMessageId = 0;
 
+const socket = io(baseurl);
+
 document.addEventListener("DOMContentLoaded", () => {
   listGroups();
   listInvites();
+});
+
+socket.on("connect", () => {
+  console.log("socket id >>> ", socket.id);
 });
 
 function displaySingleMessage(element) {
@@ -30,7 +36,6 @@ async function getMessages() {
       },
     }
   );
-  // console.log(messages);
 
   messages.forEach((element) => {
     displaySingleMessage(element);
@@ -38,32 +43,7 @@ async function getMessages() {
   });
 }
 
-async function getNewMessages() {
-  const token = localStorage.getItem("token");
-  const groupId = localStorage.getItem("groupId");
-
-  const { data: newMessages } = await axios.get(
-    `${baseurl}/chat-box/get-new-messages`,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      params: {
-        lastMessageId,
-        groupId,
-      },
-    }
-  );
-
-  // console.log(newMessages);
-
-  newMessages.forEach((element) => {
-    displaySingleMessage(element);
-    lastMessageId = element.id;
-  });
-}
-
-async function postMessage() {
+async function postMessage1() {
   const token = localStorage.getItem("token");
   const groupId = localStorage.getItem("groupId");
   const messageInput = document.getElementById("message-input");
@@ -84,7 +64,14 @@ async function postMessage() {
     }
   );
   messageInput.value = "";
+  displaySingleMessage(newMessage);
+  socket.emit("send-message", newMessage); // groupId is the room
 }
+
+socket.on("receive-message", (message) => {
+  console.log("received message >>", message);
+  displaySingleMessage(message);
+});
 
 async function createNewGroup() {
   const token = localStorage.getItem("token");
@@ -137,7 +124,6 @@ async function listGroups() {
       },
     }
   );
-  // console.log("groups => ", groupsList);
   groupsList.forEach((element) => {
     addToGroups(element.group.groupName, element.group.id);
   });
@@ -145,6 +131,7 @@ async function listGroups() {
 
 async function selectGroup(groupname, groupId) {
   localStorage.setItem("groupId", groupId);
+  socket.emit("join-group", groupId); // joining the room
 
   const groupNameChatHeading = document.getElementById(
     "group-name-chat-heading"
@@ -154,7 +141,6 @@ async function selectGroup(groupname, groupId) {
   document.getElementById("chat-container").innerHTML = "";
 
   getMessages();
-  setInterval(() => getNewMessages(), 1000);
 }
 
 // invite
@@ -183,10 +169,16 @@ async function sendInvite() {
       },
     }
   );
-  // console.log(invite);
+
   hideInvitePopup();
+  socket.emit("send-invite", invite); //sending invite to server
   alert(`Group invite sent to ${inviteeEmail}`);
 }
+
+// socket on receiving invite from server
+socket.on("receive-invite", (invite) => {
+  addToInvites(invite);
+});
 
 function addToInvites(invite) {
   const invitesList = document.getElementById("invites-list");
@@ -202,7 +194,7 @@ function addToInvites(invite) {
   joinButton.textContent = "Join";
   joinBtnDiv.appendChild(joinButton);
 
-  inviteDiv.appendChild(textDiv); 
+  inviteDiv.appendChild(textDiv);
   inviteDiv.appendChild(joinBtnDiv);
   invitesList.appendChild(inviteDiv);
 
@@ -212,15 +204,19 @@ function addToInvites(invite) {
     const token = localStorage.getItem("token");
     const groupId = invite.group.id;
 
-    const obj = {groupId, inviteId : invite.id}
+    const obj = { groupId, inviteId: invite.id };
 
-    const { data : success } = await axios.post(`${baseurl}/groups/join-group`, obj, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
+    const { data: success } = await axios.post(
+      `${baseurl}/groups/join-group`,
+      obj,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
     console.log(success);
-    alert(`You have joined group `)
+    alert(`You have joined group `);
   }
 }
 
@@ -234,10 +230,9 @@ async function listInvites() {
       },
     }
   );
-  // console.log(invitesList);
   invitesList.forEach((invite) => addToInvites(invite));
 }
 
-function showGroupInfo(){
-  window.location.href = '../group-info/index.html';
+function showGroupInfo() {
+  window.location.href = "../group-info/index.html";
 }
