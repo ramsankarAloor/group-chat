@@ -1,6 +1,5 @@
 const baseurl = BASE_URL;
 const chatContainer = document.getElementById("chat-container");
-let lastMessageId = 0;
 
 const socket = io(baseurl);
 
@@ -29,7 +28,7 @@ function displaySingleMediaMessage(element) {
   chatContainer.appendChild(chatElement);
 }
 
-async function getMessages() {
+async function getMessages(pageNumber) {
   const token = localStorage.getItem("token");
   const groupId = localStorage.getItem("groupId");
 
@@ -41,6 +40,7 @@ async function getMessages() {
       },
       params: {
         groupId,
+        page : pageNumber
       },
     }
   );
@@ -51,7 +51,6 @@ async function getMessages() {
     } else {
       displaySingleMessage(element);
     }
-    lastMessageId = element.id;
   });
 }
 
@@ -152,7 +151,7 @@ async function selectGroup(groupname, groupId) {
   groupNameChatHeading.innerHTML = htmlGroupHeading;
   document.getElementById("chat-container").innerHTML = "";
 
-  getMessages();
+  getMessages(1);
 }
 
 // invite

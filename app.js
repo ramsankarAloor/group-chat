@@ -11,6 +11,7 @@ const Messages = require("./models/messages");
 const Groups = require("./models/groups");
 const GroupUser = require("./models/group-user");
 const Invites = require("./models/invites");
+const ArchivedMessages = require("./models/archived-messages");
 
 const app = express();
 const server = http.createServer(app); // Change this line
@@ -45,6 +46,10 @@ app.use((req, res) => {
 // message user relationship
 Users.hasMany(Messages);
 Messages.belongsTo(Users);
+
+Users.hasMany(ArchivedMessages);
+ArchivedMessages.belongsTo(Users);
+
 //group user relationship
 Groups.belongsToMany(Users, { through: GroupUser });
 Users.belongsToMany(Groups, { through: GroupUser });
@@ -55,9 +60,11 @@ GroupUser.belongsTo(Users, { foreignKey: "userId" });
 Users.hasMany(GroupUser, { foreignKey: "userId" });
 
 //group message relationship
-
 Groups.hasMany(Messages);
 Messages.belongsTo(Groups);
+
+Groups.hasMany(ArchivedMessages);
+ArchivedMessages.belongsTo(Groups);
 
 //invitation relationships
 
