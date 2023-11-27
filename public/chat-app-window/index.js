@@ -141,6 +141,8 @@ async function listGroups() {
 }
 
 async function selectGroup(groupname, groupId) {
+  const hiddenDiv = document.getElementById('hidden-div');
+  hiddenDiv.style.display = 'flex';
   localStorage.setItem("groupId", groupId);
   socket.emit("join-group", groupId); // joining the room
 

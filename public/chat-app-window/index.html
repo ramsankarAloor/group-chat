@@ -24,27 +24,29 @@
         </div>
       </div>
       <div class="right-container" id="right-container">
-        <div class="chat-head" id="chat-head">
-          <div id="group-name-chat-heading"></div>
-          <div class="group-buttons">
-            <button onClick="showGroupInfo()">Group Info</button>
-            <button onclick="showInvitePopup()">Invite</button>
+        <div id="hidden-div">
+          <div class="chat-head" id="chat-head">
+            <div id="group-name-chat-heading"></div>
+            <div class="group-buttons">
+              <button onClick="showGroupInfo()">Group Info</button>
+              <button onclick="showInvitePopup()">Invite</button>
+            </div>
           </div>
-        </div>
-        <div class="chat-container" id="chat-container"></div>
-        <div class="chat-footer">
-          <div class="send-media-container">
-            <input type="file" id="file-input">
-          </div>
-          <div class="chat-input-container">
-            <input
-              type="text"
-              placeholder="  Write a message.."
-              id="message-input"
-            />
-          </div>
-          <div class="send-button-container">
-            <button onclick="postMessage1()">Send</button>
+          <div class="chat-container" id="chat-container"></div>
+          <div class="chat-footer">
+            <div class="send-media-container">
+              <input type="file" id="file-input" />
+            </div>
+            <div class="chat-input-container">
+              <input
+                type="text"
+                placeholder="  Write a message.."
+                id="message-input"
+              />
+            </div>
+            <div class="send-button-container">
+              <button onclick="postMessage1()">Send</button>
+            </div>
           </div>
         </div>
       </div>
