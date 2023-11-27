@@ -6,12 +6,14 @@ exports.postMessage = async (req, res) => {
   const t = await sequelize.transaction();
   try {
     const message = req.body.message;
+    const type = req.body.type;
     const groupId = Number(req.body.groupId);
 
     const newMessage = await Messages.create({
       message,
       userId: req.user.id,
-      groupId
+      groupId,
+      type 
     }, { transaction : t });
 
     const user = await Users.findByPk(req.user.id, {
@@ -34,7 +36,7 @@ exports.getMessages = async (req, res) => {
     const groupId = req.query.groupId;
     const messagesArray = await Messages.findAll({
       where : {groupId},
-      attributes: ["message", "id"],
+      attributes: ["message", "id", "type"],
       order: [["createdAt", "ASC"]],
       include: [{ model: Users, attributes: ["name"] }],
     });
@@ -42,7 +44,8 @@ exports.getMessages = async (req, res) => {
       id : element.id,
       name: element.user.name,
       message: element.message,
-      groupId
+      groupId,
+      type : element.type
     }));
     res.status(200).json(transformedArray);
   } catch (error) {
@@ -50,6 +53,5 @@ exports.getMessages = async (req, res) => {
     res.status(500).json({ error });
   }
 };
-
 
 

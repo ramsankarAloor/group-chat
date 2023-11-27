@@ -21,6 +21,14 @@ function displaySingleMessage(element) {
   chatContainer.appendChild(chatElement);
 }
 
+function displaySingleMediaMessage(element) {
+  const chatElement = document.createElement("div");
+  chatElement.className = "chat-element";
+  const htmlContent = `<b>${element.name}</b> : <a href="${element.message}" >${element.message}</a>`;
+  chatElement.innerHTML = htmlContent;
+  chatContainer.appendChild(chatElement);
+}
+
 async function getMessages() {
   const token = localStorage.getItem("token");
   const groupId = localStorage.getItem("groupId");
@@ -38,7 +46,11 @@ async function getMessages() {
   );
 
   messages.forEach((element) => {
-    displaySingleMessage(element);
+    if (element.type === "media") {
+      displaySingleMediaMessage(element);
+    } else {
+      displaySingleMessage(element);
+    }
     lastMessageId = element.id;
   });
 }
@@ -53,7 +65,7 @@ async function postMessage1() {
     return; // Don't post empty messages
   }
 
-  const obj = { message, groupId };
+  const obj = { message, groupId, type: "text" };
   const { data: newMessage } = await axios.post(
     `${baseurl}/chat-box/message`,
     obj,
@@ -236,3 +248,50 @@ async function listInvites() {
 function showGroupInfo() {
   window.location.href = "../group-info/index.html";
 }
+
+// send media
+
+const fileInput = document.getElementById("file-input");
+fileInput.addEventListener("change", (e) => {
+  sendFile(e);
+});
+
+async function sendFile(e) {
+  const token = localStorage.getItem("token");
+  const groupId = localStorage.getItem("groupId");
+  console.log(e.target.files);
+  const file = e.target.files[0];
+  const formData = new FormData();
+  formData.append("uploaded_file", file);
+
+  const {
+    data: { url: fileUrl },
+  } = await axios.post(`${baseurl}/chat-box/upload`, formData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  console.log(fileUrl);
+  const fileInput = document.getElementById("file-input");
+
+  const obj = { message: fileUrl, groupId, type: "media" };
+
+  const { data: newMedia } = await axios.post(
+    `${baseurl}/chat-box/message`,
+    obj,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  fileInput.value = "";
+  displaySingleMediaMessage(newMedia);
+  socket.emit("send-media", newMedia);
+}
+
+socket.on("receive-media", (message) => {
+  console.log("received media >>", message);
+  displaySingleMediaMessage(message);
+});

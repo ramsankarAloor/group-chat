@@ -73,6 +73,10 @@ socketIO.on('connection', (socket) => {
     socket.to(newMessage.groupId).emit('receive-message', newMessage);
   })
 
+  socket.on('send-media', (newMedia) => {
+    socket.to(newMedia.groupId).emit('receive-media', newMedia);
+  })
+
   socket.on('join-group', (room) => {
     socket.join(room);
   })
