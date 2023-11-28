@@ -156,6 +156,13 @@ body {
   flex-direction: row;
   margin-left: auto;
 }
+.pagination-button-container{
+  width: 100%;
+  height: auto;
+  display: flex;
+  padding-bottom: 1rem;
+  padding-left: 0.5rem;
+}
 .chat-container {
   flex-grow: 1;
   overflow-y: auto;
@@ -165,6 +172,10 @@ body {
   width: 100%;
   height: 2.7rem;
   margin-top: auto;
+}
+.send-media-container{
+  display: flex;
+  align-items: center;
 }
 .chat-input-container {
   order: 1;

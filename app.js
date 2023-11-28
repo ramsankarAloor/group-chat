@@ -1,9 +1,10 @@
+const cron = require("node-cron");
 const express = require("express");
 const path = require("path");
 const cors = require("cors");
 require("dotenv").config();
-const http = require('http'); // Add this line
-const io = require('socket.io'); // Add this line
+const http = require("http"); // Add this line
+const io = require("socket.io"); // Add this line
 const sequelize = require("./util/database");
 
 const Users = require("./models/users");
@@ -25,7 +26,8 @@ const groupRoutes = require("./routes/groups");
 const groupInfoRoutes = require("./routes/group-info");
 const { group } = require("console");
 
-app.get("/", (req, res) => { // Change this line
+app.get("/", (req, res) => {
+  // Change this line
   console.log("checkout");
   res.send("Checkout");
 });
@@ -73,27 +75,33 @@ Groups.hasMany(Invites, { foreignKey: "groupId" });
 Users.hasMany(Invites, { foreignKey: "fromId" });
 Invites.belongsTo(Users, { foreignKey: "fromId" });
 
-socketIO.on('connection', (socket) => {
+socketIO.on("connection", (socket) => {
   console.log("socket id >>>> ", socket.id);
-  socket.on('send-message', (newMessage) => {
+  socket.on("send-message", (newMessage) => {
     // socket.broadcast.emit('receive-message', newMessage); // sending to all client sockets
-    socket.to(newMessage.groupId).emit('receive-message', newMessage);
-  })
+    socket.to(newMessage.groupId).emit("receive-message", newMessage);
+  });
 
-  socket.on('send-media', (newMedia) => {
-    socket.to(newMedia.groupId).emit('receive-media', newMedia);
-  })
+  socket.on("send-media", (newMedia) => {
+    socket.to(newMedia.groupId).emit("receive-media", newMedia);
+  });
 
-  socket.on('join-group', (room) => {
+  socket.on("join-group", (room) => {
     socket.join(room);
-  })
+  });
 
-  socket.on('send-invite', (newInvite)=>{
-    socket.broadcast.emit('receive-invite', newInvite);
-  })
+  socket.on("send-invite", (newInvite) => {
+    socket.broadcast.emit("receive-invite", newInvite);
+  });
 });
+
+// cron job
+
+
 
 sequelize
   .sync()
-  .then(() => server.listen(4000, () => console.log('Server is running on port 4000')))
+  .then(() =>
+    server.listen(4000, () => console.log("Server is running on port 4000"))
+  )
   .catch((err) => console.log(err));

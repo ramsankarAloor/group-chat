@@ -1,5 +1,6 @@
 const baseurl = BASE_URL;
 const chatContainer = document.getElementById("chat-container");
+let olderCount = 0;
 
 const socket = io(baseurl);
 
@@ -154,6 +155,7 @@ async function selectGroup(groupname, groupId) {
   document.getElementById("chat-container").innerHTML = "";
 
   getMessages(1);
+  olderCount = 1;
 }
 
 // invite
@@ -296,3 +298,13 @@ socket.on("receive-media", (message) => {
   console.log("received media >>", message);
   displaySingleMediaMessage(message);
 });
+
+//older messages
+
+function olderMessages(){
+  document.getElementById('chat-container').innerHTML = '';
+  olderCount += 1
+  for(let i=olderCount; i>0; i--){
+    getMessages(i);
+  }
+}
