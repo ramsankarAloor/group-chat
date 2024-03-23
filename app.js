@@ -32,7 +32,7 @@ app.get("/", (req, res) => {
   res.send("Checkout");
 });
 
-app.use(loginSignupRoutes);
+app.use("/auth", loginSignupRoutes);
 app.use("/chat-box", chatRoutes);
 app.use("/groups", groupRoutes);
 app.use("/group-info", groupInfoRoutes);
