@@ -14,7 +14,7 @@ async function loginSubmit() {
 
   const obj = { email, password };
   try {
-    const { data: loginUser } = await axios.post(`${baseurl}/login`, obj);
+    const { data: loginUser } = await axios.post(`${baseurl}/auth/login`, obj);
     localStorage.setItem("token", loginUser.accessToken);
     window.location.href = "../chat-app-window/index.html";
   } catch (error) {

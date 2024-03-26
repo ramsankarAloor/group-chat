@@ -1,4 +1,3 @@
-const cron = require("node-cron");
 const express = require("express");
 const path = require("path");
 const cors = require("cors");
@@ -15,8 +14,8 @@ const Invites = require("./models/invites");
 const ArchivedMessages = require("./models/archived-messages");
 
 const app = express();
-const server = http.createServer(app); // Change this line
-const socketIO = io(server); // Change this line
+const server = http.createServer(app); 
+const socketIO = io(server); 
 
 app.use(cors());
 app.use(express.json());
@@ -24,15 +23,8 @@ const loginSignupRoutes = require("./routes/login-signup");
 const chatRoutes = require("./routes/chat");
 const groupRoutes = require("./routes/groups");
 const groupInfoRoutes = require("./routes/group-info");
-const { group } = require("console");
 
-app.get("/", (req, res) => {
-  // Change this line
-  console.log("checkout");
-  res.send("Checkout");
-});
-
-app.use(loginSignupRoutes);
+app.use("/auth", loginSignupRoutes);
 app.use("/chat-box", chatRoutes);
 app.use("/groups", groupRoutes);
 app.use("/group-info", groupInfoRoutes);
@@ -94,9 +86,6 @@ socketIO.on("connection", (socket) => {
     socket.broadcast.emit("receive-invite", newInvite);
   });
 });
-
-// cron job
-
 
 
 sequelize
